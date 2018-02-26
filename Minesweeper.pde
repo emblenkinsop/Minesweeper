@@ -1,9 +1,9 @@
 
 
 import de.bezier.guido.*;
-//Declare and initialize NUM_ROWS and NUM_COLS = 20
+public final static int NUM_ROWS = 20, NUM_COLS = 20;
 private MSButton[][] buttons; //2d array of minesweeper buttons
-private ArrayList <MSButton> bombs; //ArrayList of just the minesweeper buttons that are mined
+private ArrayList <MSButton> bombs = new ArrayList(); //ArrayList of just the minesweeper buttons that are mined
 
 void setup ()
 {
@@ -15,13 +15,24 @@ void setup ()
     
     //your code to initialize buttons goes here
     
+    buttons = new MSButton [NUM_ROWS] [NUM_COLS];
+    for (int i = 0; i<NUM_ROWS; i++) {
+      for (int j = 0; j<NUM_COLS; j++)
+        buttons[i][j] = new MSButton(i,j);
+    }
     
+    for (int i=0; i<20; i++)
+      setBombs();
     
-    setBombs();
 }
 public void setBombs()
 {
-    //your code
+    int row = (int)(Math.random()*20);
+    int col = (int)(Math.random()*20);
+    if (!bombs.contains(buttons[row][col]))
+      bombs.add(buttons[row][col]);
+      
+      
 }
 
 public void draw ()
@@ -53,8 +64,8 @@ public class MSButton
     
     public MSButton ( int rr, int cc )
     {
-        // width = 400/NUM_COLS;
-        // height = 400/NUM_ROWS;
+        width = 400/NUM_COLS;
+        height = 400/NUM_ROWS;
         r = rr;
         c = cc; 
         x = c*width;
@@ -76,15 +87,32 @@ public class MSButton
     public void mousePressed () 
     {
         clicked = true;
-        //your code here
+        if (keyPressed) {
+          marked = !marked;
+          if (marked == false)
+            clicked = false;
+        }
+        else if (bombs.contains(this))
+          displayLosingMessage();
+        else if (countBombs(r,c)>0)
+          label = Integer.toString(countBombs(r,c));
+        
+        
+        for (int i=r-1; i<r+2; i++)
+          for (int j=c-1; j<c+2; j++)
+            if (isValid(i,j))
+              if (!(i==r&&j==c))
+                if (!bombs.contains(buttons[i][j]))
+                  buttons[i][j].mousePressed();
     }
 
     public void draw () 
-    {    
+    {   
+      //clicked = true;  //for testing
         if (marked)
             fill(0);
-        // else if( clicked && bombs.contains(this) ) 
-        //     fill(255,0,0);
+        else if( clicked && bombs.contains(this) ) 
+             fill(255,0,0);
         else if(clicked)
             fill( 200 );
         else 
@@ -100,16 +128,16 @@ public class MSButton
     }
     public boolean isValid(int r, int c)
     {
-        //your code here
-        return false;
+        return r<=NUM_ROWS&&c<=NUM_COLS;
     }
     public int countBombs(int row, int col)
     {
         int numBombs = 0;
-        //your code here
+        for (int i=row-1; i<row+2; i++)
+          for (int j=col-1; j<col+2; j++)
+            if (isValid(i,j))
+              if (bombs.contains(buttons[i][j]))
+                numBombs++;
         return numBombs;
     }
 }
-
-
-
