@@ -2,9 +2,10 @@
 import de.bezier.guido.*;
 public final static int NUM_ROWS = 20;
 public final static int NUM_COLS = 20;
+public int numBombs = 75;
 private MSButton[][] buttons; //2d array of minesweeper buttons
 private ArrayList <MSButton> bombs = new ArrayList <MSButton>(); //ArrayList of just the minesweeper buttons that are mined
-
+int numMarked = 0;
 
 void setup ()
 {
@@ -22,7 +23,7 @@ void setup ()
       buttons[i][j] = new MSButton(i, j);
   }
 
-  for (int i=0; i<75; i++)
+  for (int i=0; i<numBombs; i++)
     setBombs();
 }
 public void setBombs()
@@ -37,20 +38,34 @@ public void draw ()
 {
   background( 0 );
   if (isWon())
-    displayWinningMessage();
+    displayWinningMessage();  
 }
+  
 public boolean isWon()
 {
-  //your code here
-  return false;
+  for (int i=0; i<NUM_ROWS; i++) {
+    for (int j=0; j<NUM_COLS; j++) {
+      if (!buttons[i][j].isMarked()&&!buttons[i][j].isClicked()) {
+        return false;
+      }
+    }
+    }
+  
+  return true;
 }
 public void displayLosingMessage()
 {
-  //your code here
+  String message = "You Lose - Try Again.";
+  for (int i=0; i<20; i++)
+    buttons[8][i].setLabel(message.substring(i,i+1));
+  System.out.println("won");
 }
 public void displayWinningMessage()
 {
-  //your code here
+  String message = "Congratulations!";
+  for (int i=0; i<16; i++)
+    buttons[8][i+2].setLabel(message.substring(i,i+1));
+  System.out.println("won");
 }
 
 public class MSButton
